@@ -4,8 +4,6 @@
 import threading
 from socketserver import ThreadingMixIn
 
-class ThreadHTTPServer(ThreadingMixIn, http.server.HTTPServer):
-    "This is an HTTPServer that supports thread-based concurrency."
 import http.server
 import os
 import requests
@@ -48,6 +46,8 @@ def CheckURI(uri, timeout=5):
         # If the GET request raised an exception, it's not OK.
         return False
 
+class ThreadHTTPServer(ThreadingMixIn, http.server.HTTPServer):
+    "This is an HTTPServer that supports thread-based concurrency."
 
 class Shortener(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
