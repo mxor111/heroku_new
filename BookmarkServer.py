@@ -6,6 +6,7 @@ from socketserver import ThreadingMixIn
 
 import http.server
 import os
+
 import requests
 from urllib.parse import unquote, parse_qs
 
@@ -46,8 +47,7 @@ def CheckURI(uri, timeout=5):
         # If the GET request raised an exception, it's not OK.
         return False
 
-class ThreadHTTPServer(ThreadingMixIn, http.server.HTTPServer):
-    "This is an HTTPServer that supports thread-based concurrency."
+
 
 class Shortener(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
@@ -76,6 +76,9 @@ class Shortener(http.server.BaseHTTPRequestHandler):
             known = "\n".join("{} : {}".format(key, memory[key])
                               for key in sorted(memory.keys()))
             self.wfile.write(form.format(known).encode())
+
+class ThreadHTTPServer(ThreadingMixIn, http.server.HTTPServer):
+    "This is an HTTPServer that supports thread-based concurrency."
 
     def do_POST(self):
         # Decode the form data.
