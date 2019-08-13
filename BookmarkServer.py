@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 #
 # A *bookmark server* or URI shortener.
+import threading
+from socketserver import ThreadingMixIn
 
+class ThreadHTTPServer(ThreadingMixIn, http.server.HTTPServer):
+    "This is an HTTPServer that supports thread-based concurrency."
 import http.server
 import os
 import requests
@@ -105,9 +109,17 @@ class Shortener(http.server.BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(
                 "Couldn't fetch URI '{}'. Sorry!".format(longuri).encode())
-
+#change where the server point for concurrency
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 8000)) #use port if its there
+    port = int(os.environ.get('PORT', 8000))
     server_address = ('', port)
-    httpd = http.server.HTTPServer(server_address, Shortener)
+    httpd = ThreadHTTPServer(server_address, Shortener)
     httpd.serve_forever()
+
+
+# This is the old code - before having it point to the Threading Http server
+#if __name__ == '__main__':
+#    port = int(os.environ.get('PORT', 8000)) #use port if its there
+#    server_address = ('', port)
+#    httpd = http.server.HTTPServer(server_address, S#hortener)
+#    httpd.serve_forever()
